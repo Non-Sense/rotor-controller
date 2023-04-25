@@ -1,0 +1,10 @@
+version: 1
+key:
+- type: "k"
+  code: 17
+- type: "k"
+  code: 30
+- type: "k"
+  code: 32
+- type: "m"
+  code: 1

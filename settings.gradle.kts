@@ -1,0 +1,2 @@
+rootProject.name = "rotor-controller"
+
