@@ -1,13 +1,13 @@
 version: 1
 key:
 - type: "k"
-  code: 30
+  code: 15
 - type: "k"
   code: 32
 - type: "k"
-  code: 44
-- type: "k"
-  code: 45
+  code: 29
+- type: "m"
+  code: 1
 strength:
 - 255
 - 255

@@ -2,6 +2,7 @@ import com.charleskorn.kaml.Yaml
 import com.github.kwhat.jnativehook.GlobalScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -68,7 +69,7 @@ class MainWindow(
 
         connectButton = JButton("接続").apply {
             setSize(70, 30)
-            setLocation(255, 30)
+            setLocation(320, 30)
             addActionListener {
                 if(isConnected) {
                     onClose()
@@ -79,6 +80,15 @@ class MainWindow(
             }
         }
         contentPane.add(connectButton)
+
+        JButton("更新").apply {
+            setSize(60, 30)
+            setLocation(255, 30)
+            addActionListener {
+                dropDown.removeAllItems()
+                portInfoGetter().forEach { dropDown.addItem(it) }
+            }
+        }.also { contentPane.add(it) }
 
         sliders = (0..3).map { index ->
             val max = if(index>=2) 195 else 255     // 170???
@@ -114,6 +124,7 @@ class MainWindow(
     }
 
     fun onDisconnected() {
+        stopAll()
         isConnected = false
         connectButton.text = "接続"
         dropDown.isEnabled = true
@@ -130,6 +141,10 @@ class MainWindow(
         tryConnect(dropDown.selectedItem as Communicator.PortInfo, false)
     }
 
+    private fun stopAll() {
+        (0..3).forEach { onKeyRelease(it) }
+    }
+
     private fun tryConnect(portInfo: Communicator.PortInfo, showDialog: Boolean = true) {
         if(!onConnect(portInfo)) {
             isConnected = false
@@ -140,16 +155,21 @@ class MainWindow(
         isConnected = true
         connectButton.text = "切断"
         dropDown.isEnabled = false
-        (0..3).forEach { onKeyRelease(it) }
+        stopAll()
     }
 
     private fun handleKeyEvent(event: KeyEvent) {
         configuringId?.let { id ->
+            if(event.type == EventType.Push)
+                return
             keyPanels.getOrNull(id)?.updateLabel(event.code.toDisplayString())
             config = config.copy(
                 key = config.key.toMutableList().apply { this[id] = Config.KeyConfig.fromKeyCode(event.code) })
             onConfigUpdate(config)
-            configuringId = null
+            CoroutineScope(Dispatchers.Swing).launch {
+                delay(1)
+                configuringId = null
+            }
             return
         }
 

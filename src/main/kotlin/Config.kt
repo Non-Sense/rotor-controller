@@ -34,11 +34,11 @@ val defaultConfig = Config(
     key = listOf(
         Config.KeyConfig(
             type = "k",
-            code = 17   // W
+            code = 30   // A
         ),
         Config.KeyConfig(
             type = "k",
-            code = 30   // A
+            code = 32   // D
         ),
         Config.KeyConfig(
             type = "k",
